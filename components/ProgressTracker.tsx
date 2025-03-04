@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as Font from 'expo-font';
-import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image, ImageBackground, Dimensions } from "react-native";
 import { Star, Droplet, Book, BrainCircuit, ChevronLeft, ChevronRight } from "lucide-react-native";
 import Loader from './Loader';
 
@@ -73,7 +73,11 @@ const ProgressTracker: React.FC = () => {
   // Calculate cell width (approximately 14.28% - margins)
   const cellWidth = '13%';
 
+  const isCurrentWeek = getWeekKey(new Date()) === weekKey;
+
   const toggleHabit = (habitId: number, dayIndex: number) => {
+    if (!isCurrentWeek) return; // Prevent editing for past/future weeks
+
     setHabitData((prev) =>
       prev.map((habit) =>
         habit.id === habitId
@@ -90,6 +94,7 @@ const ProgressTracker: React.FC = () => {
       )
     );
   };
+
 
   const changeWeek = (offset: number) => {
     const newDate = new Date(currentDate);
@@ -114,7 +119,7 @@ const ProgressTracker: React.FC = () => {
         <View className="flex-1 flex-row justify-between">
           {week.map((day, index) => (
             <View key={index} className="items-center" style={{ width: cellWidth }}>
-              <Text className={`text-xl font-labradaBold text-black`}>
+              <Text className={`text-xl font-labradaBold ${day.isToday ? "text-[#FF5733]" : "text-black"}`}>
                 {day.day}
               </Text>
               
@@ -133,7 +138,7 @@ const ProgressTracker: React.FC = () => {
                   style={{
                     fontSize: 20, // Adjust font size as needed
                     fontFamily: 'Labrada-Bold', // Ensure the font family is correct
-                    color: "#000000", // Adjust the color for today
+                    color: day.isToday ? "#FF5733" : "#000000", // Adjust the color for today
                     position: 'absolute', // Ensure the text is over the image
                     top: 11, // Adjust the value to center the text
                     zIndex: 1, // Ensure the text stays above the image
@@ -172,15 +177,26 @@ const ProgressTracker: React.FC = () => {
               {week.map((_, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => toggleHabit(habit.id, index)}
+                  onPress={() => isCurrentWeek && toggleHabit(habit.id, index)} // Only allow edits for the current week
+                  disabled={!isCurrentWeek} // Disable interaction for past/future weeks
                   className="h-12 border-2 border-black items-center justify-center mx-1"
                   style={{ 
                     width: cellWidth, 
-                    backgroundColor: habit.progress[weekKey]?.[index] ? "#FFD700" : "transparent",
+                    backgroundColor: isCurrentWeek ? "transparent" : "[#d2c98a]", // Grayed out for non-editable weeks
+                    opacity: isCurrentWeek ? 1 : 0.5, // Reduce opacity for disabled weeks
                   }}
                 >
-                  {habit.progress[weekKey]?.[index] ? <Star size={20} color="white" /> : null}
-                </TouchableOpacity>
+                  {habit.progress[weekKey]?.[index] ? (
+                    <Image 
+                      source={require('../assets/images/acorn.png')} 
+                      style={{
+                        width: 60, 
+                        height: 60,
+                        resizeMode: "stretch",
+                      }} 
+                    />
+                  ) : null}
+                </TouchableOpacity>              
               ))}
             </View>
             
