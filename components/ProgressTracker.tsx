@@ -1,32 +1,38 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import * as Font from 'expo-font';
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Dimensions } from "react-native";
 import { Star, Droplet, Book, BrainCircuit, ChevronLeft, ChevronRight } from "lucide-react-native";
+import Loader from './Loader';
 
-// Define types for TypeScript
 type Habit = {
   id: number;
   name: string;
   icon: JSX.Element;
-  progress: boolean[];
+  progress: Record<string, boolean[]>;
 };
 
-// Habit List
+// Function to format date as key
+const getWeekKey = (date: Date) => {
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  return startOfWeek.toISOString().split("T")[0];
+};
+
 const habits: Habit[] = [
-  { id: 1, name: "Drink Water", icon: <Droplet size={20} color="#4CAF50" />, progress: Array(7).fill(false) },
-  { id: 2, name: "Meditate", icon: <BrainCircuit size={20} color="#FF6347" />, progress: Array(7).fill(false) },
-  { id: 3, name: "Journal", icon: <Book size={20} color="#FFD700" />, progress: Array(7).fill(false) },
+  { id: 1, name: "Drink Water", icon: <Droplet size={20} color="#4CAF50" />, progress: {} },
+  { id: 2, name: "Meditate", icon: <BrainCircuit size={20} color="#FF6347" />, progress: {} },
+  { id: 3, name: "Journal", icon: <Book size={20} color="#FFD700" />, progress: {} },
 ];
 
-// Function to get week days dynamically
 const getWeekDays = (date: Date) => {
   const startOfWeek = new Date(date);
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Start from Sunday
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
 
   return Array.from({ length: 7 }, (_, i) => {
     const dayDate = new Date(startOfWeek);
     dayDate.setDate(startOfWeek.getDate() + i);
     return {
-      day: ["S", "M", "T", "W", "T", "F", "S"][i],
+      day: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i],
       date: dayDate.getDate(),
       isToday: dayDate.toDateString() === new Date().toDateString(),
     };
@@ -36,7 +42,36 @@ const getWeekDays = (date: Date) => {
 const ProgressTracker: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [habitData, setHabitData] = useState<Habit[]>(habits);
+  const weekKey = getWeekKey(currentDate);
   const week = getWeekDays(currentDate);
+
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  // Load custom font
+  useEffect(() => {
+    const loadFonts = async () => {
+      await Font.loadAsync({
+        'Labrada-Regular': require('../assets/fonts/Labrada-Regular.ttf'),
+        'Labrada-Bold': require('../assets/fonts/Labrada-Bold.ttf'),
+      });
+      setFontsLoaded(true); // Set state when fonts are loaded
+    };
+
+    loadFonts(); // Load the fonts when the component mounts
+  }, []);
+
+  // Return a loading view until the fonts are loaded
+  // If fonts are not loaded, show the loader
+  if (!fontsLoaded) {
+    return (
+      <View className="flex-1 bg-sailboatMarina justify-center items-center">
+        <Loader visible={true} size={100} color="#a66d45" />
+      </View>
+    );
+  }
+
+  // Calculate cell width (approximately 14.28% - margins)
+  const cellWidth = '13%';
 
   const toggleHabit = (habitId: number, dayIndex: number) => {
     setHabitData((prev) =>
@@ -44,7 +79,12 @@ const ProgressTracker: React.FC = () => {
         habit.id === habitId
           ? {
               ...habit,
-              progress: habit.progress.map((done, index) => (index === dayIndex ? !done : done)),
+              progress: {
+                ...habit.progress,
+                [weekKey]: habit.progress[weekKey]?.map((done, index) =>
+                  index === dayIndex ? !done : done
+                ) || Array(7).fill(false).map((_, i) => (i === dayIndex ? true : false)),
+              },
             }
           : habit
       )
@@ -53,53 +93,99 @@ const ProgressTracker: React.FC = () => {
 
   const changeWeek = (offset: number) => {
     const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + offset * 7); // Move forward or backward by a week
+    newDate.setDate(newDate.getDate() + offset * 7);
     setCurrentDate(newDate);
   };
 
   return (
-    <View className="flex-1 p-4 bg-[#F5EEDC]">
-      {/* Week Navigation */}
-      <View className="flex-row justify-between items-center mb-3">
-        <TouchableOpacity onPress={() => changeWeek(-1)} className="p-2 bg-gray-300 rounded">
-          <ChevronLeft size={24} color="black" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold">Week of {week[0].date} - {week[6].date}</Text>
-        <TouchableOpacity onPress={() => changeWeek(1)} className="p-2 bg-gray-300 rounded">
-          <ChevronRight size={24} color="black" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Days Header with Fixed Width */}
-      <View className="flex-row items-center mb-4">
-        <View className="w-32"></View> {/* Empty space for habit names */}
-        {week.map((day, index) => (
-          <View key={index} className="w-10 items-center">
-            <Text className={`text-lg font-semibold ${day.isToday ? "text-red-500" : "text-black"}`}>{day.day}</Text>
-            <Text className={`text-sm ${day.isToday ? "font-bold text-red-500" : "text-gray-700"}`}>{day.date}</Text>
-          </View>
-        ))}
-      </View>
-
-      <ScrollView>
-        {/* Habit List with Fixed Alignment */}
-        {habitData.map((habit) => (
-          <View key={habit.id} className="flex-row items-center mb-4">
-            <View className="w-32 flex-row items-center">
-              {habit.icon}
-              <Text className="ml-2 text-lg font-medium">{habit.name}</Text>
-            </View>
-            {/* Progress Checkboxes */}
-            {habit.progress.map((done, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => toggleHabit(habit.id, index)}
-                className="w-10 h-10 border-2 border-gray-600 rounded flex items-center justify-center mx-1"
-                style={{ backgroundColor: done ? "#FFD700" : "transparent" }}
+    <View className="pt-20 px-2 pb-0 bg-sailboatMarina">
+      <View className="flex-row mb-5 items-center justify-center">
+        {/* Left navigation button - moved even closer to align with content */}
+        <View className="w-6 justify-center">
+          <TouchableOpacity onPress={() => changeWeek(-1)}>
+            <ChevronLeft size={26} color="black" />
+          </TouchableOpacity>
+        </View>
+        
+        {/* Increased space for the habit icons/names */}
+        <View className="w-28" />
+        
+        {/* Day headers - aligned with grid cells */}
+        <View className="flex-1 flex-row justify-between">
+          {week.map((day, index) => (
+            <View key={index} className="items-center" style={{ width: cellWidth }}>
+              <Text className={`text-xl font-labradaBold text-black`}>
+                {day.day}
+              </Text>
+              
+              {/* Star background applied to the date */}
+              <ImageBackground
+                source={require('../assets/images/star-clear.png')} // Ensure you have a star image in this path
+                style={{
+                  width: 70,
+                  height: 70,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 10, // Move the star up to position it higher than the date
+                }}
               >
-                {done ? <Star size={18} color="white" /> : null}
-              </TouchableOpacity>
-            ))}
+                <Text
+                  style={{
+                    fontSize: 20, // Adjust font size as needed
+                    fontFamily: 'Labrada-Bold', // Ensure the font family is correct
+                    color: "#000000", // Adjust the color for today
+                    position: 'absolute', // Ensure the text is over the image
+                    top: 11, // Adjust the value to center the text
+                    zIndex: 1, // Ensure the text stays above the image
+                  }}
+                >
+                  {day.date}
+                </Text>
+              </ImageBackground>
+            </View>
+          ))}
+        </View>
+        
+        {/* Right navigation button */}
+        <View className="w-8 justify-center items-end">
+          <TouchableOpacity onPress={() => changeWeek(1)}>
+            <ChevronRight size={26} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Habit Rows with Grid */}
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+        {habitData.map((habit) => (
+          <View key={habit.id} className="flex-row items-center mb-5">
+            {/* Left spacing to match navigation button - reduced to match the closer nav button */}
+            <View className="w-6" />
+            
+            {/* Habit icon and name - increased width for more space */}
+            <View className="w-28 flex-row items-center">
+              {habit.icon}
+              <Text className="ml-2 text-xl font-labradaBold">{habit.name}</Text>
+            </View>
+            
+            {/* Checkbox grid - aligned with day headers */}
+            <View className="flex-1 flex-row justify-between">
+              {week.map((_, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => toggleHabit(habit.id, index)}
+                  className="h-12 border-2 border-black items-center justify-center mx-1"
+                  style={{ 
+                    width: cellWidth, 
+                    backgroundColor: habit.progress[weekKey]?.[index] ? "#FFD700" : "transparent",
+                  }}
+                >
+                  {habit.progress[weekKey]?.[index] ? <Star size={20} color="white" /> : null}
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+            {/* Right spacing to match navigation button */}
+            <View className="w-8" />
           </View>
         ))}
       </ScrollView>

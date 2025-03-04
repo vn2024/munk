@@ -7,6 +7,8 @@ module.exports = {
     extend: {
       fontFamily: {
         klee: ["KleeOne-Regular", "sans-serif"],
+        labrada: ["Labrada-Regular", "sans-serif"],
+        labradaBold: ["Labrada-Bold", "sans-serif"],
       },
       colors: {
         sweetarts: "#d2c98a",

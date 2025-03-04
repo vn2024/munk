@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Image, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from "expo-status-bar";
@@ -19,6 +19,8 @@ import utilities from "./tailwind.config.js";
 export default function App() {
   // State to track if the font is loaded
   const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const adjWidth = Platform.OS === 'web' ? "45%" : "100%";
 
   // Load custom font
   useEffect(() => {
@@ -43,13 +45,27 @@ export default function App() {
   }
 
   return (
-    <View className='flex-1 bg-sailboatMarina'>
+    <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: "100%" }} style={{ flex: 1, backgroundColor: '#f3ead6' }}>
+    <View className="bg-sailboatMarina">
       <Header />
-      <Text className='text-4xl text-daddyIssues text-center font-klee mt-24'>
-        Hello World
-      </Text>
-      <ProgressTracker />
-      {/* <CustomButton onPress={() => console.log("tap")} title="Get Started"/> */}
+      
+      {/* Progress Tracker */}
+      <View style={{ width: adjWidth, paddingLeft: 10 }}>
+        <ProgressTracker />
+      </View>
+  
+      {/* Tree Image - Naturally Positioned Below Progress Tracker */}
+      <View style={{ marginTop: 0, paddingLeft: 0 }}>
+        <Image 
+          source={require('./assets/images/tree-half.png')} 
+          style={{
+            width: 484, 
+            height: 1162,
+            resizeMode: "stretch",
+          }} 
+        />
+      </View>
     </View>
+  </ScrollView>  
   );
 }
