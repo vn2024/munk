@@ -1,23 +1,49 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ImageBackground, Platform, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { DrawerActions } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types'; // Import the type
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
+const headerHeight = Platform.OS === 'web' ? height * 0.15 : 60;
 
-const headerHeight = Platform.OS === 'web' ? height * 0.15 : 60; // For mobile devices, set fixed height like 120px
+interface HeaderProps {
+  onLogout?: () => void;
+}
 
-const Header = () => {
-  const navigation = useNavigation(); // Correctly use navigation here
+const Header: React.FC<HeaderProps> = ({ onLogout }) => {
+  // Type the navigation hook using StackNavigationProp
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   const handleMenuPress = () => {
-    // Open the drawer when the hamburger menu is pressed
-    navigation.dispatch(DrawerActions.toggleDrawer()); 
+    setIsDropdownVisible(!isDropdownVisible);
+  };
+
+  const handleDropdownItemPress = (action: string) => {
+    setIsDropdownVisible(false);
+
+    switch(action) {
+      case 'profile':
+        navigation.navigate("Home");
+        break;
+      case 'journal':
+        navigation.navigate("Journal");
+        break;
+      case 'logout':
+        if (onLogout) {
+          onLogout(); 
+        } else {
+          navigation.navigate('Login');
+        }
+        break;
+    }
   };
 
   return (
-    <View className="w-full bg-sailboatMarina flex justify-start mt-0">
-      <View className='w-full flex-row justify-between'>
+    <View className="w-full bg-sailboatMarina flex justify-start mt-0 relative" style={{ overflow: 'visible', zIndex: 100 }}>
+      <View className='w-full flex-row justify-between relative'>
         <Image 
           source={require('../assets/images/logo-header.png')} 
           style={{width: 301.5, height: 106.5, resizeMode: "contain", marginLeft: 5, marginTop: 5}} 
@@ -27,10 +53,52 @@ const Header = () => {
         <TouchableOpacity onPress={handleMenuPress} style={{ marginTop: 15 }}>
           <Image
             source={require('../assets/images/menu.png')}
-            style={{ width: 80, height: 80, resizeMode: 'contain' }}
+            style={{ marginRight: 10, width: 80, height: 80, resizeMode: 'contain' }}
           />
         </TouchableOpacity>
       </View>
+
+      {/* Dropdown Menu */}
+      {isDropdownVisible && (
+        <View className="absolute top-0 left-0 w-full h-full z-50" style={{ overflow: 'visible' }}>
+          <TouchableWithoutFeedback onPress={() => setIsDropdownVisible(false)}>
+            <View className="absolute inset-0 z-40" style={{ backgroundColor: 'rgba(0,0,0,0)' }} />
+          </TouchableWithoutFeedback>
+
+          <View 
+            className="absolute right-0 bg-white shadow-lg rounded-lg w-48"
+            style={{
+              top: 100,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              zIndex: 2000,
+              overflow: 'visible',
+            }}
+          >
+            <TouchableOpacity 
+              className="p-4 border-b border-gray-200"
+              onPress={() => handleDropdownItemPress('profile')}
+            >
+              <Text className="text-black">Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              className="p-4 border-b border-gray-200"
+              onPress={() => handleDropdownItemPress('journal')}
+            >
+              <Text className="text-black">Journal</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              className="p-4"
+              onPress={() => handleDropdownItemPress('logout')}
+            >
+              <Text className="text-red-500">Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {/* Optional Background Image */}
       <View className="w-full flex items-center mt-15">  

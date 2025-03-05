@@ -4,17 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from "expo-status-bar";
 import * as Font from 'expo-font';
 import CustomButton from '../components/CustomButton'; // Adjusted import path if needed
-import Header from '../components/Header';
 import Loader from '../components/Loader';
 import ProgressTracker from "../components/ProgressTracker";
 import '../global.css'; // Import global CSS for web if necessary
-import Animated, {
-  FadeInDown,
-  FadeInUp,
-  withSpring,
-} from "react-native-reanimated";
-import { TailwindProvider } from "tailwind-rn";
-import utilities from "../tailwind.config.js";
 
 const quotes = [
   "The best time to plant a tree was 20 years ago. The second best time is now.",
