@@ -1,7 +1,5 @@
 import { View, Image, Text, TouchableOpacity, ScrollView, Platform, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from "expo-status-bar";
 import * as Font from 'expo-font';
 import CustomButton from '../components/CustomButton'; // Adjusted import path if needed
 import Loader from '../components/Loader';
@@ -23,6 +21,8 @@ const HomeScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const adjWidth = Platform.OS === 'web' ? "45%" : "100%";
+  const treeWidth = Platform.OS === 'web' ? 518 : 518*0.5;
+  const treeHeight = Platform.OS === 'web' ? 218 : 218*0.5;
 
   const [quote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
@@ -74,8 +74,8 @@ const HomeScreen = () => {
           <ImageBackground 
             source={require('../assets/images/quote.png')} 
             style={{
-              width: 518,
-              height: 218,
+              width: treeWidth,
+              height: treeHeight,
               paddingHorizontal: 20,
               justifyContent: "center", // Aligns text to the top
               alignItems: "center",

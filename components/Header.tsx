@@ -23,12 +23,16 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
 
   const handleDropdownItemPress = (action: string) => {
     setIsDropdownVisible(false);
-
+  
+    console.log('Dropdown item pressed:', action); // Add this log
+  
     switch(action) {
       case 'profile':
+        console.log('Attempting to navigate to Home');
         navigation.navigate("Home");
         break;
       case 'journal':
+        console.log('Attempting to navigate to Journal');
         navigation.navigate("Journal");
         break;
       case 'logout':

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Alert, View, Text, Button } from 'react-native';
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Alert } from 'react-native';
 import { auth } from "./firebaseConfig";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { enableScreens } from 'react-native-screens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RootStackParamList } from "./types"; // Import the type
 
 // Import Screens
 import LoginScreen from "./screens/LoginScreen";
@@ -19,7 +20,7 @@ import JournalScreen from "screens/JournalScreen";
 enableScreens();
 
 // Create Stack Navigator
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);

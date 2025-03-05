@@ -30,7 +30,7 @@ const FallingAcorns: React.FC = () => {
     const translateY = useSharedValue(-100);
     
     // Random fall duration and speed variation
-    const fallDuration = Math.random() * 3000 + 2000; // 2-5 seconds
+    const fallDuration = Math.random() * 3000 + 5000; // 5-8 seconds
     
     // Animated style for falling
     const animatedStyle = useAnimatedStyle(() => {

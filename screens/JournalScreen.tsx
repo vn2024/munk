@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, Text, TouchableOpacity, ScrollView, Image, StyleSheet, Alert } from "react-native";
+import { View, TextInput, Text, TouchableOpacity, ScrollView, Image, StyleSheet, Platform, Dimensions } from "react-native";
 import Loader from "../components/Loader"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Font from "expo-font";
@@ -9,7 +9,7 @@ const JournalScreen = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [journalEntry, setJournalEntry] = useState("");
   const [journalEntries, setJournalEntries] = useState<string[]>([]);
-  const [entriesVisible, setEntriesVisible] = useState(false); // State to control visibility of entries
+  const [entriesVisible, setEntriesVisible] = useState(false);
   const [acornThoughts, setAcornThoughts] = useState([
     { text: "", editing: false },
     { text: "", editing: false },
@@ -105,8 +105,23 @@ const JournalScreen = () => {
   }
 
   return (
-    <ScrollView>
-      <View className="flex-1 bg-sailboatMarina items-center justify-start">
+    <ScrollView 
+      contentContainerStyle={{ 
+        flexGrow: 1, 
+        backgroundColor: '#F3EAD6' // or your sailboatMarina color 
+      }} 
+      style={{ 
+        flex: 1, 
+        backgroundColor: '#F3EAD6' // same background color 
+      }}
+    >
+      <View 
+        className="flex-1 bg-sailboatMarina" 
+        style={{ 
+          minHeight: '100%', 
+          backgroundColor: '#F3EAD6' // ensure full screen coverage 
+        }}
+      >
         <Text className="font-klee color-daddyIssues text-2xl mb-4 p-10">Journaling Screen</Text>
 
         <View style={styles.container}>
@@ -159,10 +174,10 @@ const JournalScreen = () => {
 
         {/* Button to Toggle Entries Visibility */}
         <TouchableOpacity
-          className="bg-daddyIssues mt-5 p-3 rounded-lg"
+          className="bg-daddyIssues mt-5 p-3 rounded-lg w-[55%] self-center"
           onPress={toggleEntriesVisibility}
         >
-          <Text className="text-sailboatMarina font-labrada text-2xl">{entriesVisible ? "Hide Entries" : "Show Entries"}</Text>
+          <Text className="text-sailboatMarina self-center font-labrada text-2xl">{entriesVisible ? "Hide Entries" : "Show Entries"}</Text>
         </TouchableOpacity>
 
         {/* Display Previous Entries only when visible */}
@@ -172,7 +187,7 @@ const JournalScreen = () => {
               journalEntries.map((entry, index: number) => (
                 <View 
                   key={index} 
-                  className="p-3 my-2 bg-sweetarts rounded-lg border border-daddyIssues"
+                  className="p-3 my-2 bg-sweetarts self-center rounded-lg border border-daddyIssues"
                   style={styles.entryWrapper} // Add styling for the entry
                 >
                   <Text style={[styles.savedEntryText]}>{entry}</Text> {/* Display Date/Time + Content */}
@@ -197,23 +212,25 @@ const JournalScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: Platform.OS === 'web' ? 'row' : 'column',
     width: '100%',
-    justifyContent: 'flex-start', // Align to the left
+    justifyContent: 'flex-start',
     marginBottom: 20,
   },
   leftColumn: {
-    width: '55%', // Adjusted to leave more space for acorns
+    width: Platform.OS === 'web' ? '55%' : '90%',
     justifyContent: 'flex-start',
-    marginLeft: 20,
+    alignSelf: 'center',
     padding: 10,
   },
   rightColumn: {
-    width: '45%',
+    width: Platform.OS === 'web' ? '45%' : '90%',
     justifyContent: 'flex-start',
     flexDirection: 'column',
     padding: 10,
-    marginLeft: 100,
+    alignSelf: 'center',
+    marginLeft: Platform.OS === 'web' ? 100 : 0,
+    marginTop: Platform.OS === 'web' ? 0 : 20,
   },
   textInput: {
     height: 200,
