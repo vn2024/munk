@@ -103,6 +103,7 @@ const HomeScreen = () => {
               source={require('../assets/images/quote.png')} 
               style={{
                 width: "90%",
+                height: 90,
                 paddingHorizontal: 10,
                 paddingVertical: 10,
                 justifyContent: "center",
