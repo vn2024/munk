@@ -4,6 +4,7 @@ import * as Font from 'expo-font';
 import MunkMeditate from '../components/MunkMeditate';
 import Loader from '../components/Loader';
 import ProgressTracker from "../components/ProgressTracker";
+import MoodTracker from "../components/MoodTracker";
 import '../global.css'; // Import global CSS for web if necessary
 
 const quotes = [
@@ -56,9 +57,26 @@ const HomeScreen = () => {
     <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: "100%" }} style={{ flex: 1, backgroundColor: '#f3ead6' }}>
       <View className="bg-sailboatMarina">
         {/* Progress Tracker */}
+        {Platform.OS === 'web' ? (
+        <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: 0, }}>
         <View style={{ width: adjWidth, paddingLeft: 10 }}>
           <ProgressTracker />
         </View>
+        <View style={{ marginTop: "10%", marginRight: "10%", paddingLeft: 20, alignSelf: "flex-start"}}>
+          <MoodTracker />
+        </View>
+        </View>
+        ) :
+        (
+          <View>
+          <View style={{ width: "100%"}}>
+            <ProgressTracker />
+            </View>
+            <View style={{marginTop: "10%", padding: 10, marginRight: "10%", alignSelf: "flex-start"}}>
+              <MoodTracker />
+            </View>
+          </View>
+        )}
         
         {Platform.OS === 'web' ? (
           // Web version - show full layout with tree
