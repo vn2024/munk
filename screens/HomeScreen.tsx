@@ -102,15 +102,15 @@ const HomeScreen = () => {
             <ImageBackground 
               source={require('../assets/images/quote.png')} 
               style={{
-                width: treeWidth,
-                height: treeHeight,
-                paddingHorizontal: 20,
+                width: "90%",
+                paddingHorizontal: 10,
+                paddingVertical: 10,
                 justifyContent: "center",
                 alignItems: "center",
                 alignSelf: "center",
                 marginBottom: 20
               }}
-              resizeMode="contain"
+              resizeMode="cover"
             >
               <Text className="text-center text-lg font-labradaBold text-gray-800">
                 {quote}
