@@ -1,7 +1,7 @@
 import { View, Image, Text, TouchableOpacity, ScrollView, Platform, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as Font from 'expo-font';
-import CustomButton from '../components/CustomButton'; // Adjusted import path if needed
+import MunkMeditate from '../components/MunkMeditate';
 import Loader from '../components/Loader';
 import ProgressTracker from "../components/ProgressTracker";
 import '../global.css'; // Import global CSS for web if necessary
@@ -20,9 +20,9 @@ const HomeScreen = () => {
   // State to track if the font is loaded
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  const adjWidth = Platform.OS === 'web' ? "45%" : "100%";
-  const treeWidth = Platform.OS === 'web' ? 518 : 518*0.5;
-  const treeHeight = Platform.OS === 'web' ? 218 : 218*0.5;
+  const adjWidth = Platform.OS === 'web' ? "60%" : "100%";
+  const treeWidth = Platform.OS === 'web' ? 518 : 518*0.25;
+  const treeHeight = Platform.OS === 'web' ? 218 : 218*0.25;
 
   const [quote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
@@ -57,7 +57,7 @@ const HomeScreen = () => {
       </View>
       
       {/* Tree Image - Naturally Positioned Below Progress Tracker */}
-      <View style={{ flexDirection: "row", alignItems: "flex-start", paddingTop: 0 }}>
+      <View style={{ width: "100%", flexDirection: "row", alignItems: "flex-start", paddingTop: 0 }}>
         {/* Tree Image - Stays at the very top left */}
         <Image 
           source={require('../assets/images/tree-half.png')} 
@@ -70,7 +70,7 @@ const HomeScreen = () => {
         />
 
         {/* Quote - Aligned to the top of the tree */}
-        <View style={{ paddingLeft: 20, alignSelf: "flex-start" }}>
+        <View style={{ paddingLeft: 20, alignSelf: "flex-start", justifyContent: "space-between", }}>
           <ImageBackground 
             source={require('../assets/images/quote.png')} 
             style={{
@@ -86,6 +86,9 @@ const HomeScreen = () => {
               {quote}
             </Text>
           </ImageBackground>
+          <View className='mb-10'>
+            <MunkMeditate />
+          </View>
         </View>
       </View>
     </View>
