@@ -14,6 +14,10 @@ const quotes = [
   "Nature does not hurry, yet everything is accomplished.",
   "Your roots determine your growth.",
   "Keep growing, no matter the season.",
+  "Grow at your own pace. Even the tallest trees start as tiny seeds.",
+  "Some days you bloom, some days you rest -- both are part of growing.",
+  "You are still growing, even if you can’t see it yet.",
+  "Like a plant, you don’t have to bloom all the time to be beautiful.",
 ];
 
 const HomeScreen = () => {
