@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as Font from 'expo-font';
-import { View, Text, TouchableOpacity, ScrollView, Image, ImageBackground, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image, ImageBackground, Dimensions, Platform } from "react-native";
 import { Star, Droplet, Book, BrainCircuit, ChevronLeft, ChevronRight } from "lucide-react-native";
 import Loader from './Loader';
 
@@ -10,6 +10,11 @@ type Habit = {
   icon: JSX.Element;
   progress: Record<string, boolean[]>;
 };
+
+const starSize = Platform.OS === 'web' ? 70 : 40;
+const dateSize = Platform.OS === 'web' ? 20 : 15;
+const textSize = Platform.OS === 'web' ? 20 : 12;
+const datePos = Platform.OS === 'web' ? 11 : 7;
 
 // Function to format date as key
 const getWeekKey = (date: Date) => {
@@ -119,7 +124,7 @@ const ProgressTracker: React.FC = () => {
         <View className="flex-1 flex-row justify-between">
           {week.map((day, index) => (
             <View key={index} className="items-center" style={{ width: cellWidth }}>
-              <Text className={`text-xl font-labradaBold ${day.isToday ? "text-[#FF5733]" : "text-black"}`}>
+              <Text className={`font-labradaBold ${day.isToday ? "text-[#FF5733]" : "text-black"}`} style={{fontSize: textSize, }}>
                 {day.day}
               </Text>
               
@@ -127,8 +132,8 @@ const ProgressTracker: React.FC = () => {
               <ImageBackground
                 source={require('../assets/images/star-clear.png')} // Ensure you have a star image in this path
                 style={{
-                  width: 70,
-                  height: 70,
+                  width: starSize,
+                  height: starSize,
                   justifyContent: "center",
                   alignItems: "center",
                   marginTop: 10, // Move the star up to position it higher than the date
@@ -136,11 +141,11 @@ const ProgressTracker: React.FC = () => {
               >
                 <Text
                   style={{
-                    fontSize: 20, // Adjust font size as needed
+                    fontSize: dateSize, // Adjust font size as needed
                     fontFamily: 'Labrada-Bold', // Ensure the font family is correct
                     color: day.isToday ? "#FF5733" : "#000000", // Adjust the color for today
                     position: 'absolute', // Ensure the text is over the image
-                    top: 11, // Adjust the value to center the text
+                    top: datePos, // Adjust the value to center the text
                     zIndex: 1, // Ensure the text stays above the image
                   }}
                 >

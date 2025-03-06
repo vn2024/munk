@@ -1,20 +1,11 @@
-import { View, Image, Text, TouchableOpacity, ScrollView, Platform, ImageBackground } from 'react-native';
+import { View, Image, Text, ScrollView, Platform, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from "expo-status-bar";
 import * as Font from 'expo-font';
-import CustomButton from '../components/CustomButton'; // Adjusted import path if needed
-import Header from '../components/Header';
+import MunkMeditate from '../components/MunkMeditate';
 import Loader from '../components/Loader';
 import ProgressTracker from "../components/ProgressTracker";
+import MoodTracker from "../components/MoodTracker";
 import '../global.css'; // Import global CSS for web if necessary
-import Animated, {
-  FadeInDown,
-  FadeInUp,
-  withSpring,
-} from "react-native-reanimated";
-import { TailwindProvider } from "tailwind-rn";
-import utilities from "../tailwind.config.js";
 
 const quotes = [
   "The best time to plant a tree was 20 years ago. The second best time is now.",
@@ -24,13 +15,19 @@ const quotes = [
   "Nature does not hurry, yet everything is accomplished.",
   "Your roots determine your growth.",
   "Keep growing, no matter the season.",
+  "Grow at your own pace. Even the tallest trees start as tiny seeds.",
+  "Some days you bloom, some days you rest -- both are part of growing.",
+  "You are still growing, even if you can’t see it yet.",
+  "Like a plant, you don’t have to bloom all the time to be beautiful.",
 ];
 
 const HomeScreen = () => {
   // State to track if the font is loaded
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  const adjWidth = Platform.OS === 'web' ? "45%" : "100%";
+  const adjWidth = Platform.OS === 'web' ? "60%" : "100%";
+  const treeWidth = Platform.OS === 'web' ? 518 : 518*0.25;
+  const treeHeight = Platform.OS === 'web' ? 218 : 218*0.25;
 
   const [quote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
@@ -58,46 +55,94 @@ const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: "100%" }} style={{ flex: 1, backgroundColor: '#f3ead6' }}>
-    <View className="bg-sailboatMarina">
-      {/* Progress Tracker */}
-      <View style={{ width: adjWidth, paddingLeft: 10 }}>
-        <ProgressTracker />
-      </View>
-      
-      {/* Tree Image - Naturally Positioned Below Progress Tracker */}
-      <View style={{ flexDirection: "row", alignItems: "flex-start", paddingTop: 0 }}>
-        {/* Tree Image - Stays at the very top left */}
-        <Image 
-          source={require('../assets/images/tree-half.png')} 
-          style={{
-            width: 440, 
-            height: 756,
-            resizeMode: "contain",
-            marginLeft: 0, // Keep tree at margin 0
-          }} 
-        />
-
-        {/* Quote - Aligned to the top of the tree */}
-        <View style={{ paddingLeft: 20, alignSelf: "flex-start" }}>
-          <ImageBackground 
-            source={require('../assets/images/quote.png')} 
-            style={{
-              width: 518,
-              height: 218,
-              paddingHorizontal: 20,
-              justifyContent: "center", // Aligns text to the top
-              alignItems: "center",
-            }}
-            resizeMode="contain"
-          >
-            <Text className="text-center text-lg font-labradaBold text-gray-800">
-              {quote}
-            </Text>
-          </ImageBackground>
+      <View className="bg-sailboatMarina">
+        {/* Progress Tracker */}
+        {Platform.OS === 'web' ? (
+        <View style={{ flexDirection: "row", justifyContent: "space-around", paddingTop: 0, }}>
+        <View style={{ width: adjWidth, paddingLeft: 10 }}>
+          <ProgressTracker />
         </View>
+        <View style={{ marginTop: "10%", marginRight: "10%", paddingLeft: 20, alignSelf: "flex-start"}}>
+          <MoodTracker />
+        </View>
+        </View>
+        ) :
+        (
+          <View>
+          <View style={{ width: "100%"}}>
+            <ProgressTracker />
+            </View>
+            <View style={{marginTop: "10%", padding: 10, marginRight: "10%", alignSelf: "flex-start"}}>
+              <MoodTracker />
+            </View>
+          </View>
+        )}
+        
+        {Platform.OS === 'web' ? (
+          // Web version - show full layout with tree
+          <View style={{ width: "100%", flexDirection: "row", alignItems: "flex-start", paddingTop: 0 }}>
+            {/* Tree Image - Stays at the very top left */}
+            <Image 
+              source={require('../assets/images/tree-half.png')} 
+              style={{
+                width: 440, 
+                height: 756,
+                resizeMode: "contain",
+                marginLeft: 0, // Keep tree at margin 0
+              }} 
+            />
+
+            {/* Quote - Aligned to the top of the tree */}
+            <View style={{ paddingLeft: 20, alignSelf: "flex-start", justifyContent: "space-between", }}>
+              <ImageBackground 
+                source={require('../assets/images/quote.png')} 
+                style={{
+                  width: treeWidth,
+                  height: treeHeight,
+                  paddingHorizontal: 20,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                resizeMode="contain"
+              >
+                <Text className="text-center text-lg font-labradaBold text-gray-800">
+                  {quote}
+                </Text>
+              </ImageBackground>
+              <View className='mb-10'>
+                <MunkMeditate />
+              </View>
+            </View>
+          </View>
+        ) : (
+          // Mobile version - only show quote and MunkMeditate
+          <View style={{ width: "100%", padding: 20 }}>
+            <ImageBackground 
+              source={require('../assets/images/quote.png')} 
+              style={{
+                width: "90%",
+                height: 90,
+                paddingHorizontal: 10,
+                paddingVertical: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                alignSelf: "center",
+                marginBottom: 20
+              }}
+              resizeMode="cover"
+            >
+              <Text className="text-center text-lg font-labradaBold text-gray-800">
+                {quote}
+              </Text>
+            </ImageBackground>
+            <View className='mb-10'>
+              <MunkMeditate />
+            </View>
+          </View>
+        )}
       </View>
-    </View>
-  </ScrollView>  
+    </ScrollView>  
   );
 }
+
 export default HomeScreen;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "743739191434",
+    "project_id": "munk-ee8a2",
+    "storage_bucket": "munk-ee8a2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743739191434:android:833e7441a58c44fe063d73",
+        "android_client_info": {
+          "package_name": "com.serenesquad.munk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACorqI3uS3eB7Ntkx86LK9SILI-ataSTQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
