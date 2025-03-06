@@ -1,4 +1,4 @@
-import { View, Image, Text, TouchableOpacity, ScrollView, Platform, ImageBackground } from 'react-native';
+import { View, Image, Text, ScrollView, Platform, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as Font from 'expo-font';
 import MunkMeditate from '../components/MunkMeditate';
@@ -50,49 +50,76 @@ const HomeScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: "100%" }} style={{ flex: 1, backgroundColor: '#f3ead6' }}>
-    <View className="bg-sailboatMarina">
-      {/* Progress Tracker */}
-      <View style={{ width: adjWidth, paddingLeft: 10 }}>
-        <ProgressTracker />
-      </View>
-      
-      {/* Tree Image - Naturally Positioned Below Progress Tracker */}
-      <View style={{ width: "100%", flexDirection: "row", alignItems: "flex-start", paddingTop: 0 }}>
-        {/* Tree Image - Stays at the very top left */}
-        <Image 
-          source={require('../assets/images/tree-half.png')} 
-          style={{
-            width: 440, 
-            height: 756,
-            resizeMode: "contain",
-            marginLeft: 0, // Keep tree at margin 0
-          }} 
-        />
-
-        {/* Quote - Aligned to the top of the tree */}
-        <View style={{ paddingLeft: 20, alignSelf: "flex-start", justifyContent: "space-between", }}>
-          <ImageBackground 
-            source={require('../assets/images/quote.png')} 
-            style={{
-              width: treeWidth,
-              height: treeHeight,
-              paddingHorizontal: 20,
-              justifyContent: "center", // Aligns text to the top
-              alignItems: "center",
-            }}
-            resizeMode="contain"
-          >
-            <Text className="text-center text-lg font-labradaBold text-gray-800">
-              {quote}
-            </Text>
-          </ImageBackground>
-          <View className='mb-10'>
-            <MunkMeditate />
-          </View>
+      <View className="bg-sailboatMarina">
+        {/* Progress Tracker */}
+        <View style={{ width: adjWidth, paddingLeft: 10 }}>
+          <ProgressTracker />
         </View>
+        
+        {Platform.OS === 'web' ? (
+          // Web version - show full layout with tree
+          <View style={{ width: "100%", flexDirection: "row", alignItems: "flex-start", paddingTop: 0 }}>
+            {/* Tree Image - Stays at the very top left */}
+            <Image 
+              source={require('../assets/images/tree-half.png')} 
+              style={{
+                width: 440, 
+                height: 756,
+                resizeMode: "contain",
+                marginLeft: 0, // Keep tree at margin 0
+              }} 
+            />
+
+            {/* Quote - Aligned to the top of the tree */}
+            <View style={{ paddingLeft: 20, alignSelf: "flex-start", justifyContent: "space-between", }}>
+              <ImageBackground 
+                source={require('../assets/images/quote.png')} 
+                style={{
+                  width: treeWidth,
+                  height: treeHeight,
+                  paddingHorizontal: 20,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                resizeMode="contain"
+              >
+                <Text className="text-center text-lg font-labradaBold text-gray-800">
+                  {quote}
+                </Text>
+              </ImageBackground>
+              <View className='mb-10'>
+                <MunkMeditate />
+              </View>
+            </View>
+          </View>
+        ) : (
+          // Mobile version - only show quote and MunkMeditate
+          <View style={{ width: "100%", padding: 20 }}>
+            <ImageBackground 
+              source={require('../assets/images/quote.png')} 
+              style={{
+                width: treeWidth,
+                height: treeHeight,
+                paddingHorizontal: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                alignSelf: "center",
+                marginBottom: 20
+              }}
+              resizeMode="contain"
+            >
+              <Text className="text-center text-lg font-labradaBold text-gray-800">
+                {quote}
+              </Text>
+            </ImageBackground>
+            <View className='mb-10'>
+              <MunkMeditate />
+            </View>
+          </View>
+        )}
       </View>
-    </View>
-  </ScrollView>  
+    </ScrollView>  
   );
 }
+
 export default HomeScreen;
